@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💝 Un petit quizz pour Nina 💝</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Quicksand', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fce4ec, #f8bbd0, #f48fb1);
+    overflow: hidden;
+    padding: 20px;
+  }
+
+  .hearts-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .floating-heart {
+    position: absolute;
+    font-size: 20px;
+    animation: floatUp linear infinite;
+    opacity: 0.6;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg) scale(1); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) rotate(360deg) scale(0.5); opacity: 0; }
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 40px 30px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(233, 30, 99, 0.2);
+    position: relative;
+    z-index: 1;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  @keyframes popInBounce {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .card h1 {
+    font-size: 1.8em;
+    color: #c2185b;
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    color: #6d4c5e;
+    font-size: 1.05em;
+    margin-bottom: 25px;
+    line-height: 1.5;
+  }
+
+  .card .emoji-big {
+    font-size: 3.5em;
+    margin-bottom: 15px;
+    display: block;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+  }
+
+  .question-label {
+    font-size: 1.15em;
+    color: #880e4f;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.4;
+  }
+
+  .answers {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .answer-btn {
+    background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+    border: 2px solid #f48fb1;
+    border-radius: 16px;
+    padding: 14px 20px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    color: #880e4f;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .answer-btn:hover {
+    background: linear-gradient(135deg, #f8bbd0, #f48fb1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.25);
+    color: #fff;
+  }
+
+  .answer-btn:active {
+    transform: translateY(0);
+  }
+
+  .answer-btn.correct {
+    background: linear-gradient(135deg, #e91e63, #c2185b);
+    color: #fff;
+    border-color: #c2185b;
+    animation: popInBounce 0.4s ease;
+  }
+
+  .progress {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 25px;
+  }
+
+  .progress .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #f8bbd0;
+    transition: all 0.3s ease;
+  }
+
+  .progress .dot.active {
+    background: #e91e63;
+    transform: scale(1.3);
+  }
+
+  .progress .dot.done {
+    background: #c2185b;
+  }
+
+  .score-msg {
+    font-size: 1.1em;
+    color: #880e4f;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .final-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #e91e63, #c2185b);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 40px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1.15em;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 30px rgba(233, 30, 99, 0.4);
+  }
+
+  .final-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 40px rgba(233, 30, 99, 0.5);
+  }
+
+  .finale-hearts {
+    font-size: 2em;
+    margin-top: 20px;
+    animation: pulse 1s ease-in-out infinite;
+  }
+
+  .hidden { display: none; }
+
+  .confetti-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .confetti {
+    position: absolute;
+    top: -10px;
+    font-size: 24px;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .reaction {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    min-height: 40px;
+    animation: popInBounce 0.3s ease;
+  }
+
+  @media (max-width: 400px) {
+    .card { padding: 30px 20px; }
+    .card h1 { font-size: 1.5em; }
+    .emoji-big { font-size: 2.8em; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hearts-bg" id="heartsBg"></div>
+<div class="confetti-container" id="confetti"></div>
+
+<div class="card" id="card">
+  <!-- ÉCRAN D'ACCUEIL -->
+  <div id="screen-welcome">
+    <span class="emoji-big">💝</span>
+    <h1>Hey Nina !</h1>
+    <p>J'ai un petit quizz pour toi...<br>Tu es prête ?</p>
+    <button class="final-btn" onclick="startQuiz()">C'est parti ! 🥰</button>
+  </div>
+
+  <!-- ÉCRAN QUIZ -->
+  <div id="screen-quiz" class="hidden">
+    <div class="progress" id="progress"></div>
+    <div class="reaction" id="reaction"></div>
+    <div class="question-label" id="question"></div>
+    <div class="answers" id="answers"></div>
+  </div>
+
+  <!-- ÉCRAN FINAL -->
+  <div id="screen-final" class="hidden">
+    <span class="emoji-big">🥺💘</span>
+    <h1>Nina...</h1>
+    <p id="final-text"></p>
+    <button class="final-btn" id="final-btn" onclick="sayYes()">Oui, je veux bien 💕</button>
+    <div class="finale-hearts hidden" id="finale-hearts">💖✨💖✨💖</div>
+  </div>
+
+  <!-- ÉCRAN POST-OUI -->
+  <div id="screen-yes" class="hidden">
+    <span class="emoji-big">🥰</span>
+    <h1>YEEES !</h1>
+    <p id="yes-text"></p>
+    <div class="finale-hearts">💕💘💕💘💕</div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Combien de bisous je te dois par jour ? 💋",
+    answers: ["10, c'est raisonnable", "100, minimum syndical", "1000, on est pas là pour rigoler", "Illimité, évidemment"],
+    correct: 3,
+    reactions: ["Hmm, un peu radin non ? 🤔", "On s'approche... 😏", "Tu chauffes ! 🔥", "BONNE RÉPONSE 💋💋💋"]
+  },
+  {
+    q: "Si j'étais un animal, je serais... 🐾",
+    answers: ["Un koala (mode collant activé)", "Un pingouin (fidèle à vie)", "Un chiot (trop content de te voir)", "Un chat (câlins quand JE décide)"],
+    correct: 2,
+    reactions: ["Collant oui, mais pas que ! 😂", "Aww les pingouins 🐧💕", "Wouf wouf 🐶", "Hmm, un peu trop indépendant 😼"]
+  },
+  {
+    q: "Quel est mon super pouvoir secret ? 🦸",
+    answers: ["Te faire rire à 3h du mat'", "Voler les couvertures la nuit", "Les câlins thérapeutiques", "Manger ta nourriture discrètement"],
+    correct: 0,
+    reactions: ["Héhé, tu me connais bien 😄", "... ok c'est vrai aussi 🫣", "Certifié ISO 9001 🤗", "JE SAVAIS QUE TU AVAIS REMARQUÉ 😱"]
+  },
+  {
+    q: "On est le meilleur duo depuis... 👫",
+    answers: ["Bonnie & Clyde 🔫", "Sel & Poivre 🧂", "Wi-Fi & Mot de passe 📶", "Netflix & Canapé 🛋️"],
+    correct: 2,
+    reactions: ["En moins criminel quand même 😅", "Basique mais efficace 👨‍🍳", "Inutile l'un sans l'autre 🥹", "Pas faux du tout 😂"]
+  },
+  {
+    q: "Pourquoi tu me supportes ? 🤷‍♂️",
+    answers: ["Tes blagues (on sait tous que oui)", "T'as pas le choix maintenant", "Par amour évidemment 🥰", "Pour les restos gratuits 🍕"],
+    correct: 2,
+    reactions: ["Mes blagues sont GÉNIALES 😤", "Hahaha piégée ! 🪤", "Awww 🥹💖", "Au moins t'es honnête 😂"]
+  }
+];
+
+let current = 0;
+let score = 0;
+
+function createFloatingHearts() {
+  const bg = document.getElementById('heartsBg');
+  const hearts = ['💕', '💖', '💗', '💝', '💘', '♥️', '🩷'];
+  for (let i = 0; i < 20; i++) {
+    const heart = document.createElement('span');
+    heart.className = 'floating-heart';
+    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+    heart.style.left = Math.random() * 100 + '%';
+    heart.style.animationDuration = (6 + Math.random() * 8) + 's';
+    heart.style.animationDelay = (Math.random() * 10) + 's';
+    heart.style.fontSize = (14 + Math.random() * 20) + 'px';
+    bg.appendChild(heart);
+  }
+}
+
+function startQuiz() {
+  document.getElementById('screen-welcome').classList.add('hidden');
+  document.getElementById('screen-quiz').classList.remove('hidden');
+  renderProgress();
+  renderQuestion();
+}
+
+function renderProgress() {
+  const div = document.getElementById('progress');
+  div.innerHTML = '';
+  for (let i = 0; i < questions.length; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot' + (i < current ? ' done' : '') + (i === current ? ' active' : '');
+    div.appendChild(dot);
+  }
+}
+
+function renderQuestion() {
+  const q = questions[current];
+  document.getElementById('question').textContent = q.q;
+  document.getElementById('reaction').textContent = '';
+  const answersDiv = document.getElementById('answers');
+  answersDiv.innerHTML = '';
+  q.answers.forEach((a, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'answer-btn';
+    btn.textContent = a;
+    btn.onclick = () => selectAnswer(i);
+    answersDiv.appendChild(btn);
+  });
+}
+
+function selectAnswer(index) {
+  const q = questions[current];
+  const btns = document.querySelectorAll('.answer-btn');
+
+  // Show reaction
+  document.getElementById('reaction').textContent = q.reactions[index];
+
+  if (index === q.correct) score++;
+
+  btns[index].classList.add('correct');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+
+  setTimeout(() => {
+    current++;
+    if (current < questions.length) {
+      document.getElementById('card').style.animation = 'none';
+      void document.getElementById('card').offsetHeight;
+      document.getElementById('card').style.animation = 'popIn 0.4s ease';
+      renderProgress();
+      renderQuestion();
+    } else {
+      showFinal();
+    }
+  }, 1200);
+}
+
+function showFinal() {
+  document.getElementById('screen-quiz').classList.add('hidden');
+  document.getElementById('screen-final').classList.remove('hidden');
+  document.getElementById('card').style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+  let msg = "";
+  if (score === questions.length) {
+    msg = "Score parfait ! Tu me connais par cœur 💯\n\nMais j'ai une dernière question, la plus importante....\n\n✨ Est-ce que tu veux être ma Valentine ? ✨";
+  } else if (score >= 3) {
+    msg = "Pas mal du tout ! " + score + "/" + questions.length + " 💪\n\nMais peu importe le score...\n\n✨ Est-ce que tu veux être ma Valentine ? ✨";
+  } else {
+    msg = score + "/" + questions.length + "... On a du boulot 😂\n\nMais une chose est sûre...\n\n✨ Est-ce que tu veux être ma Valentine ? ✨";
+  }
+  document.getElementById('final-text').innerText = msg;
+}
+
+function sayYes() {
+  document.getElementById('screen-final').classList.add('hidden');
+  document.getElementById('screen-yes').classList.remove('hidden');
+  document.getElementById('card').style.animation = 'popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+  document.getElementById('yes-text').innerText = "Je savais que tu dirais oui 🥰\n\nJoyeuse Saint-Valentin mon cœur 💘\n\n— Martin";
+
+  launchConfetti();
+}
+
+function launchConfetti() {
+  const container = document.getElementById('confetti');
+  const emojis = ['💖', '💕', '💘', '✨', '🥰', '💝', '🩷', '🌹', '💗', '❤️‍🔥'];
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const span = document.createElement('span');
+      span.className = 'confetti';
+      span.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      span.style.left = Math.random() * 100 + '%';
+      span.style.animationDuration = (2 + Math.random() * 3) + 's';
+      span.style.fontSize = (16 + Math.random() * 20) + 'px';
+      container.appendChild(span);
+      setTimeout(() => span.remove(), 5000);
+    }, i * 80);
+  }
+}
+
+createFloatingHearts();
+</script>
+</body>
+</html>
