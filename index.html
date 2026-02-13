@@ -194,6 +194,29 @@
     animation: pulse 1s ease-in-out infinite;
   }
 
+  .btn-container {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .nope-btn {
+    background: #eee;
+    border: 2px solid #ccc;
+    border-radius: 50px;
+    padding: 14px 32px;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+
   .hidden { display: none; }
 
   .confetti-container {
@@ -239,7 +262,7 @@
   <!-- ÉCRAN D'ACCUEIL -->
   <div id="screen-welcome">
     <span class="emoji-big">💝</span>
-    <h1>Hey Nina !</h1>
+    <h1>cc bb 😏</h1>
     <p>J'ai un petit quizz pour toi...<br>Tu es prête ?</p>
     <button class="final-btn" onclick="startQuiz()">C'est parti ! 🥰</button>
   </div>
@@ -257,7 +280,10 @@
     <span class="emoji-big">🥺💘</span>
     <h1>Nina...</h1>
     <p id="final-text"></p>
-    <button class="final-btn" id="final-btn" onclick="sayYes()">Oui, je veux bien 💕</button>
+    <div class="btn-container">
+      <button class="final-btn" onclick="sayYes()">Oui, je veux bien 💕</button>
+      <button class="nope-btn" id="nope-btn" onmouseover="runAway()" ontouchstart="runAway()">Non 😤</button>
+    </div>
     <div class="finale-hearts hidden" id="finale-hearts">💖✨💖✨💖</div>
   </div>
 
@@ -295,6 +321,12 @@ const questions = [
     answers: ["Bonnie & Clyde 🔫", "Sel & Poivre 🧂", "Wi-Fi & Mot de passe 📶", "Netflix & Canapé 🛋️"],
     correct: 2,
     reactions: ["En moins criminel quand même 😅", "Basique mais efficace 👨‍🍳", "Inutile l'un sans l'autre 🥹", "Pas faux du tout 😂"]
+  },
+  {
+    q: "Pourquoi je te fixe tout le temps ? 👀",
+    answers: ["J'ai un bug dans la matrice", "Je vérifie que t'es réelle", "Parce que t'es belle bg 🫠", "Je me souviens plus ce que j'allais dire"],
+    correct: 2,
+    reactions: ["Nan mais sérieux... c'est parce que t'es belle 🫠", "T'es trop belle pour être vraie c'est vrai 🥹", "Bah oui. Fallait le dire. T'es belle. 💖", "T'es tellement belle que j'ai perdu mes mots 🧠💥"]
   },
   {
     q: "Pourquoi tu me supportes ? 🤷‍♂️",
@@ -421,6 +453,19 @@ function launchConfetti() {
       setTimeout(() => span.remove(), 5000);
     }, i * 80);
   }
+}
+
+function runAway() {
+  const btn = document.getElementById('nope-btn');
+  const card = document.querySelector('.card');
+  const rect = card.getBoundingClientRect();
+  const maxX = rect.width - btn.offsetWidth - 40;
+  const maxY = rect.height - btn.offsetHeight - 40;
+  const x = Math.random() * maxX - maxX / 2;
+  const y = Math.random() * maxY - maxY / 2;
+  btn.style.transform = `translate(${x}px, ${y}px)`;
+  const phrases = ["Même pas en rêve 😏", "Nope 🫣", "Essaie encore 😂", "Non 😤", "Raté 🏃‍♂️", "Hehe 🤭", "Tu crois ? 😜"];
+  btn.textContent = phrases[Math.floor(Math.random() * phrases.length)];
 }
 
 createFloatingHearts();
